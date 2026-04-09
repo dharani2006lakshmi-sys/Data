@@ -4,7 +4,7 @@ const firebaseConfig = {
   projectId: "data-fc399",
   storageBucket: "data-fc399.firebasestorage.app",
   messagingSenderId: "239642224017",
-  appId: "1:239642224017:web:0cdd526c82abad4812e630"
+  appId: "1:239642224017:web:bf4f681a2492bf2e12e630"
 };
 
 firebase.initializeApp(firebaseConfig);
