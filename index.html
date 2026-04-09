@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>StudentVault — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --navy:#0a1628;--navy2:#0f2040;--navy3:#162a52;
+    --gold:#c9a84c;--gold2:#e8c96a;--gold3:#f0d98a;
+    --text:#e8edf5;--muted:#8a9bb5;--card:#111e36;
+    --border:#1e3058;--danger:#e05c5c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--navy);
+    min-height:100vh;display:flex;
+    align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  /* animated background */
+  body::before{
+    content:'';position:fixed;inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(201,168,76,.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(22,42,82,.9) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .grid-bg{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);
+    background-size:50px 50px;
+    pointer-events:none;
+  }
+  .login-wrap{
+    position:relative;z-index:10;
+    display:flex;flex-direction:column;align-items:center;
+    width:100%;max-width:440px;padding:0 20px;
+  }
+  .logo-area{
+    text-align:center;margin-bottom:40px;
+    animation:fadeDown .7s ease both;
+  }
+  .logo-icon{
+    width:72px;height:72px;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    border-radius:20px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:32px;margin:0 auto 16px;
+    box-shadow:0 0 40px rgba(201,168,76,.3);
+  }
+  .logo-area h1{
+    font-family:'Playfair Display',serif;
+    font-size:2rem;color:var(--text);letter-spacing:.02em;
+  }
+  .logo-area p{color:var(--muted);font-size:.9rem;margin-top:6px;font-weight:300;}
+  .card{
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 24px 60px rgba(0,0,0,.5);
+    animation:fadeUp .7s .15s ease both;
+  }
+  .card h2{
+    font-family:'Playfair Display',serif;
+    color:var(--text);font-size:1.4rem;margin-bottom:28px;
+  }
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block;font-size:.8rem;font-weight:500;
+    color:var(--muted);text-transform:uppercase;letter-spacing:.08em;
+    margin-bottom:8px;
+  }
+  .field input{
+    width:100%;padding:13px 16px;
+    background:var(--navy2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;
+    outline:none;transition:border-color .2s,box-shadow .2s;
+  }
+  .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12);}
+  .btn-login{
+    width:100%;padding:14px;margin-top:8px;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    border:none;border-radius:10px;
+    color:var(--navy);font-family:'DM Sans',sans-serif;
+    font-size:1rem;font-weight:600;
+    cursor:pointer;transition:opacity .2s,transform .15s;
+    letter-spacing:.02em;
+  }
+  .btn-login:hover{opacity:.9;transform:translateY(-1px);}
+  .btn-login:active{transform:translateY(0);}
+  .divider{
+    display:flex;align-items:center;gap:12px;
+    margin:20px 0;color:var(--muted);font-size:.85rem;
+  }
+  .divider::before,.divider::after{
+    content:'';flex:1;height:1px;background:var(--border);
+  }
+  .btn-google{
+    width:100%;padding:13px;
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);font-family:'DM Sans',sans-serif;
+    font-size:.95rem;font-weight:400;
+    cursor:pointer;transition:border-color .2s,background .2s;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .btn-google:hover{border-color:var(--gold);background:rgba(201,168,76,.05);}
+  .btn-google img{width:20px;height:20px;}
+  .error-msg{
+    background:rgba(224,92,92,.12);border:1px solid rgba(224,92,92,.3);
+    color:#f08080;border-radius:8px;padding:10px 14px;
+    font-size:.85rem;margin-bottom:16px;display:none;
+  }
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:none}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="login-wrap">
+  <div class="logo-area">
+    <div class="logo-icon">🎓</div>
+    <h1>StudentVault</h1>
+    <p>Student Information Management System</p>
+  </div>
+  <div class="card">
+    <h2>Welcome back</h2>
+    <div class="error-msg" id="errMsg"></div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="emailInput" placeholder="admin@example.com"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="passInput" placeholder="••••••••"/>
+    </div>
+    <button class="btn-login" onclick="loginEmail()">Sign In</button>
+    <div class="divider">or continue with</div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+      Sign in with Google
+    </button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script>
+  // Redirect if already logged in
+  auth.onAuthStateChanged(u => { if(u) window.location.href='dashboard.html'; });
+
+  function showErr(msg){ const e=document.getElementById('errMsg'); e.textContent=msg; e.style.display='block'; }
+
+  function loginEmail(){
+    const email=document.getElementById('emailInput').value.trim();
+    const pass=document.getElementById('passInput').value;
+    if(!email||!pass){showErr('Please fill in all fields.');return;}
+    auth.signInWithEmailAndPassword(email,pass)
+      .then(()=>window.location.href='dashboard.html')
+      .catch(e=>showErr(e.message));
+  }
+
+  function loginGoogle(){
+    const provider=new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(()=>window.location.href='dashboard.html')
+      .catch(e=>showErr(e.message));
+  }
+
+  document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')loginEmail();});
+</script>
+</body>
+</html>
