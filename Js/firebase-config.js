@@ -1,12 +1,12 @@
-// ⚠️ REPLACE with your Firebase project config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAWY0l0iJr2Pzk0TFLy2IQjD-y4i6gT5d8",
+  authDomain: "data-fc399.firebaseapp.com",
+  projectId: "data-fc399",
+  storageBucket: "data-fc399.firebasestorage.app",
+  messagingSenderId: "239642224017",
+  appId: "1:239642224017:web:0cdd526c82abad4812e630"
 };
+
 firebase.initializeApp(firebaseConfig);
 const auth    = firebase.auth();
 const db      = firebase.firestore();
