@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudentVault — All Students</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#0a1628;color:#e8edf5;font-family:Arial,sans-serif;display:flex;min-height:100vh;}
+.sidebar{width:240px;flex-shrink:0;background:#111e36;border-right:1px solid #1e3058;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;}
+.sb-logo{display:flex;align-items:center;gap:11px;padding:20px 16px;border-bottom:1px solid #1e3058;}
+.sb-logo-icon{font-size:24px;}.sb-logo-title{font-size:1rem;color:#e8edf5;font-weight:700;font-family:Georgia,serif;}.sb-logo-sub{font-size:.68rem;color:#8a9bb5;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #1e3058;}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#e8c96a);display:flex;align-items:center;justify-content:center;color:#0a1628;font-weight:700;font-size:.9rem;flex-shrink:0;}
+.sb-nm{font-size:.85rem;font-weight:600;color:#e8edf5;}.sb-em{font-size:.68rem;color:#8a9bb5;word-break:break-all;}
+.sb-links{list-style:none;padding:10px 8px;flex:1;}
+.sb-links li{margin-bottom:2px;}
+.sb-links a{display:block;padding:10px 12px;border-radius:9px;color:#8a9bb5;text-decoration:none;font-size:.86rem;}
+.sb-links a:hover{background:#0f2040;color:#e8edf5;}
+.sb-links a.on{background:rgba(201,168,76,.14);color:#c9a84c;border-left:3px solid #c9a84c;padding-left:9px;}
+.sb-out{margin:10px 8px;padding:10px;background:transparent;border:1px solid #1e3058;border-radius:9px;color:#8a9bb5;font-size:.83rem;cursor:pointer;width:calc(100% - 16px);}
+.sb-out:hover{border-color:#e05c5c;color:#e05c5c;}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:#111e36;border-bottom:1px solid #1e3058;align-items:center;padding:0 14px;z-index:200;gap:10px;}
+.hbtn{background:none;border:none;color:#e8edf5;font-size:1.3rem;cursor:pointer;}
+.topbar-t{font-size:1rem;color:#e8edf5;flex:1;font-family:Georgia,serif;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
+.overlay.on{display:block;}
+.main{margin-left:240px;flex:1;padding:28px;background:#0a1628;min-height:100vh;}
+.phdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.phdr h1{font-family:Georgia,serif;font-size:1.8rem;color:#e8edf5;}
+.btn-add{padding:10px 20px;background:linear-gradient(135deg,#c9a84c,#e8c96a);border:none;border-radius:9px;color:#0a1628;font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filters input,.filters select{padding:9px 12px;background:#111e36;border:1px solid #1e3058;border-radius:9px;color:#e8edf5;font-size:.85rem;outline:none;}
+.filters input{flex:1;min-width:180px;}
+.filters select{min-width:150px;}
+.filters input:focus,.filters select:focus{border-color:#c9a84c;}
+.filters select option{background:#0f2040;}
+.count{color:#8a9bb5;font-size:.82rem;margin-bottom:12px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.card{background:#111e36;border:1px solid #1e3058;border-radius:14px;padding:18px;}
+.card:hover{border-color:rgba(201,168,76,.4);}
+.ctop{display:flex;gap:12px;align-items:center;margin-bottom:10px;}
+.cav{width:52px;height:52px;border-radius:50%;background:#0a1628;border:2px solid #1e3058;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+.cav img{width:100%;height:100%;object-fit:cover;}
+.cnm{font-weight:600;font-size:.92rem;color:#e8edf5;}
+.creg{font-size:.76rem;color:#8a9bb5;margin-top:2px;}
+.cdpt{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.72rem;background:rgba(80,120,220,.15);color:#6090dc;margin-top:4px;}
+.cdet{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:.78rem;color:#8a9bb5;margin-bottom:12px;}
+.cact{display:flex;gap:7px;}
+.bview{flex:1;padding:8px;border-radius:8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.25);color:#c9a84c;font-size:.82rem;cursor:pointer;text-align:center;text-decoration:none;display:block;}
+.bview:hover{background:rgba(201,168,76,.2);}
+.bdel{padding:8px 11px;border-radius:8px;background:rgba(224,92,92,.08);border:1px solid rgba(224,92,92,.2);color:#e05c5c;font-size:.82rem;cursor:pointer;}
+.bdel:hover{background:rgba(224,92,92,.2);}
+.empty{grid-column:1/-1;text-align:center;padding:50px;color:#8a9bb5;font-size:.9rem;}
+.empty a{color:#c9a84c;text-decoration:none;}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%);transition:transform .28s;}
+  .sidebar.open{transform:translateX(0);}
+  .topbar{display:flex;}
+  .main{margin-left:0;padding:66px 13px 22px;}
+}
+</style>
+</head>
+<body>
+<div class="sidebar" id="sb">
+  <div class="sb-logo"><div class="sb-logo-icon">🎓</div><div><div class="sb-logo-title">StudentVault</div><div class="sb-logo-sub">Management System</div></div></div>
+  <div class="sb-user"><div class="sb-av" id="sav">A</div><div><div class="sb-nm" id="snm">Admin</div><div class="sb-em" id="sem">Loading...</div></div></div>
+  <ul class="sb-links">
+    <li><a href="dashboard.html">📊 Dashboard</a></li>
+    <li><a href="students.html" class="on">👥 All Students</a></li>
+    <li><a href="add-student.html">➕ Add Student</a></li>
+  </ul>
+  <button class="sb-out" id="btnOut">🚪 Sign Out</button>
+</div>
+<div class="overlay" id="ov" onclick="closeNav()"></div>
+<header class="topbar"><button class="hbtn" onclick="openNav()">☰</button><div class="topbar-t">All Students</div></header>
+<main class="main">
+  <div class="phdr"><h1>All Students</h1><a class="btn-add" href="add-student.html">+ Add Student</a></div>
+  <div class="filters">
+    <input type="text" id="sq" placeholder="🔍  Search by name, register no., email...">
+    <select id="sd"><option value="">All Departments</option><option>Artificial Intelligence and Data Science</option><option>Computer Science Engineering</option><option>Information Technology</option><option>Electronics and Communication</option><option>Electrical Engineering</option><option>Mechanical Engineering</option><option>Civil Engineering</option></select>
+    <select id="sb2"><option value="">All Batches</option><option>2023-2027</option><option>2022-2026</option><option>2021-2025</option><option>2020-2024</option></select>
+    <select id="sg"><option value="">All Genders</option><option>Male</option><option>Female</option><option>Other</option></select>
+  </div>
+  <div class="count" id="cnt">Loading...</div>
+  <div class="grid" id="grid"><div class="empty">Loading students...</div></div>
+</main>
+
+<script type="module">
+import { initializeApp }     from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const app  = initializeApp({ apiKey:"AIzaSyAWY0l0iJr2Pzk0TFLy2IQjD-y4i6gT5d8", authDomain:"data-fc399.firebaseapp.com", projectId:"data-fc399", storageBucket:"data-fc399.firebasestorage.app", messagingSenderId:"239642224017", appId:"1:239642224017:web:bf4f681a2492bf2e12e630" });
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+window.openNav  = () => { document.getElementById('sb').classList.add('open');  document.getElementById('ov').classList.add('on'); };
+window.closeNav = () => { document.getElementById('sb').classList.remove('open'); document.getElementById('ov').classList.remove('on'); };
+document.getElementById('btnOut').addEventListener('click', () => signOut(auth).then(() => location.href='index.html'));
+
+function toast(msg,type='success') {
+  const old=document.getElementById('toast');if(old)old.remove();
+  const t=document.createElement('div');t.id='toast';
+  t.style.cssText='position:fixed;bottom:24px;right:16px;z-index:9999;padding:12px 17px;border-radius:11px;font-size:.86rem;display:flex;align-items:center;gap:8px;max-width:290px;box-shadow:0 6px 24px rgba(0,0,0,.5);font-family:Arial,sans-serif;background:'+(type==='error'?'#4d1e1e':'#1b4d2e')+';border:1px solid '+(type==='error'?'rgba(200,80,80,.4)':'rgba(80,200,100,.4)')+';color:'+(type==='error'?'#f08080':'#90e0a0')+';';
+  t.innerHTML=(type==='error'?'❌ ':'✅ ')+msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+
+let all = [];
+onAuthStateChanged(auth, async u => {
+  if (!u) { location.href='index.html'; return; }
+  const nm = u.displayName || u.email.split('@')[0];
+  document.getElementById('snm').textContent = nm;
+  document.getElementById('sem').textContent = u.email;
+  document.getElementById('sav').textContent = nm[0].toUpperCase();
+
+  const q = query(collection(db,'students'), orderBy('createdAt','desc'));
+  const snap = await getDocs(q);
+  all = snap.docs.map(d => ({id:d.id,...d.data()}));
+  filter();
+});
+
+function filter() {
+  const q  = document.getElementById('sq').value.toLowerCase();
+  const dp = document.getElementById('sd').value;
+  const bt = document.getElementById('sb2').value;
+  const gd = document.getElementById('sg').value;
+  const res = all.filter(s => {
+    const nm = ((s.firstName||'')+' '+(s.lastName||'')).toLowerCase();
+    const rg = (s.registerNumber||'').toLowerCase();
+    const em = (s.personalEmail||'').toLowerCase();
+    return (!q||(nm.includes(q)||rg.includes(q)||em.includes(q)))
+      && (!dp||s.department===dp) && (!bt||s.batch===bt) && (!gd||s.gender===gd);
+  });
+  document.getElementById('cnt').textContent = `Showing ${res.length} of ${all.length} students`;
+  const g = document.getElementById('grid');
+  if (!res.length) { g.innerHTML='<div class="empty">No students found. <a href="add-student.html">Add one →</a></div>'; return; }
+  g.innerHTML = res.map(s => `
+    <div class="card">
+      <div class="ctop">
+        <div class="cav">${s.photoURL?`<img src="${s.photoURL}">`:'👤'}</div>
+        <div><div class="cnm">${s.firstName||''} ${s.lastName||''}</div><div class="creg">${s.registerNumber||'—'}</div><span class="cdpt">${s.department||'—'}</span></div>
+      </div>
+      <div class="cdet"><span>🎂 ${s.dob||'—'}</span><span>🩸 ${s.bloodGroup||'—'}</span><span>📱 ${s.mobile||'—'}</span><span>📅 ${s.batch||'—'}</span></div>
+      <div class="cact">
+        <a class="bview" href="profile2.html?id=${s.id}">View Profile</a>
+        <button class="bdel" data-id="${s.id}" data-nm="${(s.firstName||'')+' '+(s.lastName||'')}">🗑</button>
+      </div>
+    </div>`).join('');
+
+  document.querySelectorAll('.bdel').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm(`Delete ${btn.dataset.nm}?`)) return;
+      try {
+        await deleteDoc(doc(db,'students',btn.dataset.id));
+        all = all.filter(s => s.id !== btn.dataset.id);
+        filter();
+        toast(`${btn.dataset.nm} deleted.`);
+      } catch(e) { toast('Delete failed: '+e.message,'error'); }
+    });
+  });
+}
+
+document.getElementById('sq').addEventListener('input', filter);
+document.getElementById('sd').addEventListener('change', filter);
+document.getElementById('sb2').addEventListener('change', filter);
+document.getElementById('sg').addEventListener('change', filter);
+</script>
+</body>
+</html>
